@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎨 Claude AI Animation Prompt Generator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+            background: rgba(255, 255, 255, 0.15);
+            padding: 40px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h1 {
+            font-size: 2.8em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.95;
+        }
+
+        .api-section {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 15px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            margin-bottom: 25px;
+            backdrop-filter: blur(10px);
+        }
+
+        .api-input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .api-input-group input {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            font-size: 1em;
+        }
+
+        .api-input-group input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .api-input-group input:focus {
+            outline: none;
+            border-color: white;
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .api-status {
+            color: white;
+            font-size: 0.95em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #ff6b6b;
+        }
+
+        .status-dot.active {
+            background: #51cf66;
+        }
+
+        .style-selector {
+            text-align: center;
+            margin-bottom: 25px;
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .style-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+
+        .style-btn {
+            padding: 12px 24px;
+            border: 2px solid #e0e0e0;
+            background: white;
+            color: #667eea;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 1em;
+            transition: all 0.3s;
+        }
+
+        .style-btn.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .style-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+            border: 2px solid rgba(102, 126, 234, 0.1);
+        }
+
+        .card h3 {
+            color: #667eea;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.4em;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 700;
+            color: #333;
+        }
+
+        input[type="text"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-family: inherit;
+            font-size: 1em;
+            transition: all 0.3s;
+        }
+
+        input[type="text"]:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            background: #f0f4ff;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .character-count {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+        }
+
+        .char-btn {
+            padding: 10px 20px;
+            border: 2px solid #e0e0e0;
+            background: white;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            color: #667eea;
+        }
+
+        .char-btn.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .button {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.05em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            margin-bottom: 15px;
+            box-shadow: 0 5px 15px rgba(245, 87, 108, 0.3);
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(245, 87, 108, 0.4);
+        }
+
+        .btn-secondary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .btn-copy {
+            background: #667eea;
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9em;
+            font-weight: 600;
+        }
+
+        .btn-copy:hover {
+            background: #764ba2;
+        }
+
+        .btn-delete {
+            background: #ff6b6b;
+            color: white;
+            padding: 6px 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .btn-delete:hover {
+            background: #ff5252;
+        }
+
+        .scene-item {
+            background: linear-gradient(135deg, #f0f4ff 0%, #f7ebff 100%);
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .scene-info p {
+            margin-bottom: 5px;
+            color: #666;
+        }
+
+        .scene-info .scene-name {
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 8px;
+        }
+
+        .side-panel {
+            max-height: 700px;
+            overflow-y: auto;
+        }
+
+        .side-panel::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .side-panel::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .side-panel::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 10px;
+        }
+
+        .empty-message {
+            text-align: center;
+            color: #999;
+            padding: 30px 20px;
+            font-style: italic;
+        }
+
+        .prompts-section {
+            margin-top: 30px;
+        }
+
+        .prompts-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .prompts-header h2 {
+            color: white;
+            font-size: 1.8em;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-download {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            box-shadow: 0 5px 15px rgba(17, 153, 142, 0.3);
+        }
+
+        .btn-download:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(17, 153, 142, 0.4);
+        }
+
+        .prompt-item {
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .prompt-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .prompt-header h3 {
+            color: #667eea;
+            font-size: 1.2em;
+        }
+
+        .prompt-text {
+            background: #f8f9ff;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 15px;
+            max-height: 400px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            line-height: 1.6;
+            color: #444;
+        }
+
+        .action-inputs {
+            border-top: 2px solid #e0e0e0;
+            padding-top: 20px;
+            margin-top: 20px;
+        }
+
+        .action-inputs h4 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        @media (max-width: 1024px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .api-input-group {
+                flex-direction: column;
+            }
+        }
+
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            animation: slideIn 0.3s ease;
+            z-index: 1000;
+            font-weight: 600;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .style-badge {
+            display: inline-block;
+            background: rgba(102, 126, 234, 0.2);
+            color: #667eea;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎨 Claude AI Animation Prompt Generator</h1>
+            <p>Viết + Dịch + Tối Ưu Prompts Bằng Claude AI</p>
+        </div>
+
+        <!-- API Key Input -->
+        <div class="api-section">
+            <div class="api-input-group">
+                <input 
+                    type="password" 
+                    id="apiKey" 
+                    placeholder="Nhập Claude API Key (sk-ant-...)"
+                >
+                <button class="button btn-primary" id="testApiBtn" style="width: 200px; margin: 0;">🔑 Kiểm Tra API</button>
+            </div>
+            <div class="api-status">
+                <div class="status-dot" id="statusDot"></div>
+                <span id="statusText">Chưa kết nối API</span>
+            </div>
+        </div>
+
+        <!-- Style Selector -->
+        <div class="style-selector">
+            <label style="margin: 0 0 15px 0;">Chọn Phong Cách Hoạt Hình</label>
+            <div class="style-buttons">
+                <button class="style-btn active" data-style="pixar3d">🎬 Pixar 3D</button>
+                <button class="style-btn" data-style="realism">🌟 Realism</button>
+                <button class="style-btn" data-style="cartoon">🎨 Cartoon</button>
+                <button class="style-btn" data-style="anime">✨ Anime</button>
+            </div>
+        </div>
+
+        <div class="main-grid">
+            <div class="card">
+                <h3>📝 Thiết Lập</h3>
+
+                <div class="form-group">
+                    <label>Số Lượng Nhân Vật</label>
+                    <div class="character-count" id="charCount">
+                        <button class="char-btn active" data-num="2">2 Nhân Vật</button>
+                        <button class="char-btn" data-num="3">3 Nhân Vật</button>
+                        <button class="char-btn" data-num="4">4 Nhân Vật</button>
+                        <button class="char-btn" data-num="5">5 Nhân Vật</button>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>👥 Mô Tả Nhân Vật (Tiếng Việt)</label>
+                    <div id="charactersContainer"></div>
+                </div>
+
+                <div class="form-group">
+                    <label>Tên Scene</label>
+                    <input type="text" id="sceneName" placeholder="Ví dụ: Cuộc phiêu lưu trong rừng">
+                </div>
+
+                <div class="form-group">
+                    <label>Bối Cảnh</label>
+                    <input type="text" id="setting" placeholder="Ví dụ: rừng xanh tươi vào buổi chiều">
+                </div>
+
+                <div class="form-group">
+                    <label>Dụng Cụ & Chi Tiết</label>
+                    <input type="text" id="props" placeholder="Ví dụ: cây, lá, nước, đá">
+                </div>
+
+                <div class="form-group">
+                    <label>Thời Lượng Video</label>
+                    <select id="duration">
+                        <option value="5-6">5-6 giây</option>
+                        <option value="8-10" selected>8-10 giây</option>
+                        <option value="10-12">10-12 giây</option>
+                        <option value="12-15">12-15 giây</option>
+                    </select>
+                </div>
+
+                <div class="action-inputs">
+                    <h4>🎬 Hành Động Của Từng Nhân Vật</h4>
+                    <div id="actionsContainer"></div>
+                </div>
+
+                <button class="button btn-secondary" id="addSceneBtn">➕ Thêm Scene</button>
+            </div>
+
+            <div class="card side-panel">
+                <h3>📋 Danh Sách Scenes</h3>
+                <div id="scenesList" class="empty-message">Chưa có scene nào</div>
+                <button class="button btn-primary" id="generateBtn" style="margin-top: 20px; display: none;">✨ Tạo Prompts Bằng Claude</button>
+            </div>
+        </div>
+
+        <!-- Generated Prompts -->
+        <div id="promptsSection" style="display: none;">
+            <div class="card prompts-section">
+                <div class="prompts-header">
+                    <h2>📹 Animation Prompts (Claude AI)</h2>
+                    <button class="btn-download" id="downloadBtn">⬇️ Tải Xuống</button>
+                </div>
+                <div id="promptsList"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let numCharacters = 2;
+        let scenes = [];
+        let generatedPrompts = [];
+        let currentStyle = 'pixar3d';
+        let apiKey = '';
+        let isApiConnected = false;
+
+        const styleConfigs = {
+            pixar3d: 'Pixar 3D - rộn ràng, đầy cảm xúc, kỹ xảo cao',
+            realism: 'Realism 3D - chân thực, chi tiết cao, như phim live-action',
+            cartoon: 'Cartoon 3D - vui nhộn, đơn giản, phim hoạt hình hiện đại',
+            anime: 'Anime Style - đặc trưng anime, giàu cảm xúc'
+        };
+
+        function init() {
+            updateCharacterInputs();
+            updateActionInputs();
+            setupEventListeners();
+        }
+
+        function setupEventListeners() {
+            document.getElementById('charCount').addEventListener('click', (e) => {
+                if (e.target.classList.contains('char-btn')) {
+                    document.querySelectorAll('#charCount .char-btn').forEach(btn => btn.classList.remove('active'));
+                    e.target.classList.add('active');
+                    numCharacters = parseInt(e.target.dataset.num);
+                    updateCharacterInputs();
+                    updateActionInputs();
+                }
+            });
+
+            document.querySelectorAll('.style-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    document.querySelectorAll('.style-btn').forEach(b => b.classList.remove('active'));
+                    e.target.classList.add('active');
+                    currentStyle = e.target.dataset.style;
+                });
+            });
+
+            document.getElementById('testApiBtn').addEventListener('click', testApi);
+            document.getElementById('addSceneBtn').addEventListener('click', addScene);
+            document.getElementById('generateBtn').addEventListener('click', generatePrompts);
+            document.getElementById('downloadBtn').addEventListener('click', downloadPrompts);
+        }
+
+        async function testApi() {
+            const key = document.getElementById('apiKey').value.trim();
+            
+            if (!key) {
+                showToast('❌ Vui lòng nhập API Key');
+                return;
+            }
+
+            document.getElementById('testApiBtn').disabled = true;
+            showToast('⏳ Đang kiểm tra API...');
+
+            try {
+                const response = await fetch('https://api.anthropic.com/v1/messages', {
+                    method: 'POST',
+                    headers: {
+                        'x-api-key': key,
+                        'anthropic-version': '2023-06-01',
+                        'content-type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        model: 'claude-3-5-sonnet-20241022',
+                        max_tokens: 100,
+                        messages: [{
+                            role: 'user',
+                            content: 'Xin chào'
+                        }]
+                    })
+                });
+
+                if (response.ok) {
+                    apiKey = key;
+                    isApiConnected = true;
+                    document.getElementById('statusDot').classList.add('active');
+                    document.getElementById('statusText').textContent = '✅ API đã kết nối thành công';
+                    showToast('✅ API Key hợp lệ!');
+                } else {
+                    showToast('❌ API Key không hợp lệ');
+                }
+            } catch (error) {
+                showToast('❌ Lỗi kết nối: ' + error.message);
+            }
+
+            document.getElementById('testApiBtn').disabled = false;
+        }
+
+        function updateCharacterInputs() {
+            const container = document.getElementById('charactersContainer');
+            container.innerHTML = '';
+            for (let i = 0; i < numCharacters; i++) {
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.className = 'character-input';
+                input.placeholder = `Nhân vật ${i + 1}...`;
+                input.style.marginBottom = '10px';
+                container.appendChild(input);
+            }
+        }
+
+        function updateActionInputs() {
+            const container = document.getElementById('actionsContainer');
+            container.innerHTML = '';
+            for (let i = 0; i < numCharacters; i++) {
+                const div = document.createElement('div');
+                div.className = 'form-group';
+                div.innerHTML = `
+                    <label>Hành Động Nhân Vật ${i + 1}</label>
+                    <textarea class="action-input" placeholder="Mô tả hành động..."></textarea>
+                `;
+                container.appendChild(div);
+            }
+        }
+
+        function getCharacters() {
+            return Array.from(document.querySelectorAll('.character-input')).map(input => input.value.trim());
+        }
+
+        function getActions() {
+            return Array.from(document.querySelectorAll('.action-input')).map(input => input.value.trim());
+        }
+
+        function addScene() {
+            const sceneName = document.getElementById('sceneName').value.trim();
+            const setting = document.getElementById('setting').value.trim();
+            const props = document.getElementById('props').value.trim();
+            const actions = getActions();
+            const duration = document.getElementById('duration').value;
+
+            if (!sceneName || !setting) {
+                showToast('❌ Vui lòng nhập tên scene và bối cảnh');
+                return;
+            }
+
+            if (actions.every(a => !a)) {
+                showToast('❌ Vui lòng nhập ít nhất một hành động');
+                return;
+            }
+
+            const scene = { sceneName, setting, props, actions, duration, id: Date.now() };
+            scenes.push(scene);
+
+            document.getElementById('sceneName').value = '';
+            document.getElementById('setting').value = '';
+            document.getElementById('props').value = '';
+            document.querySelectorAll('.action-input').forEach(input => input.value = '');
+
+            renderScenesList();
+            showToast('✅ Đã thêm scene');
+        }
+
+        function renderScenesList() {
+            const list = document.getElementById('scenesList');
+            const genBtn = document.getElementById('generateBtn');
+
+            if (scenes.length === 0) {
+                list.innerHTML = '<div class="empty-message">Chưa có scene nào</div>';
+                genBtn.style.display = 'none';
+            } else {
+                genBtn.style.display = 'flex';
+                list.innerHTML = scenes.map((scene, idx) => `
+                    <div class="scene-item">
+                        <div class="scene-info">
+                            <div class="scene-name">Scene ${idx + 1}: ${scene.sceneName}</div>
+                            <p>${scene.setting}</p>
+                            <div style="font-size: 0.9em; color: #999;">⏱️ ${scene.duration}s | 👥 ${scene.actions.filter(a => a).length} hành động</div>
+                        </div>
+                        <button class="btn-delete" onclick="deleteScene(${scene.id})">🗑️</button>
+                    </div>
+                `).join('');
+            }
+        }
+
+        function deleteScene(id) {
+            scenes = scenes.filter(s => s.id !== id);
+            renderScenesList();
+            showToast('✅ Đã xóa scene');
+        }
+
+        async function generatePrompts() {
+            if (!isApiConnected) {
+                showToast('❌ Vui lòng kiểm tra API trước');
+                return;
+            }
+
+            const characters = getCharacters();
+
+            if (characters.some(c => !c)) {
+                showToast('❌ Vui lòng nhập mô tả cho tất cả nhân vật');
+                return;
+            }
+
+            document.getElementById('generateBtn').disabled = true;
+            showToast('⏳ Claude đang viết prompts...');
+
+            generatedPrompts = [];
+
+            for (let scene of scenes) {
+                const prompt = buildPrompt(characters, scene);
+                
+                try {
+                    const response = await fetch('https://api.anthropic.com/v1/messages', {
+                        method: 'POST',
+                        headers: {
+                            'x-api-key': apiKey,
+                            'anthropic-version': '2023-06-01',
+                            'content-type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            model: 'claude-3-5-sonnet-20241022',
+                            max_tokens: 1500,
+                            messages: [{
+                                role: 'user',
+                                content: `Bạn là một chuyên gia tạo prompts cho các AI tạo video hoạt hình.
+
+Phong cách: ${styleConfigs[currentStyle]}
+
+Dữ liệu cảnh:
+- Nhân vật: ${characters.join(', ')}
+- Bối cảnh: ${scene.setting}
+- Dụng cụ: ${scene.props}
+- Hành động: ${scene.actions.filter(a => a).join('; ')}
+- Thời lượng: ${scene.duration} giây
+
+Hãy tạo một prompt video chi tiết bằng TIẾNG ANH để tạo hoạt hình này. Prompt nên:
+1. Mô tả chi tiết bối cảnh, nhân vật, hành động
+2. Hướng dẫn phong cách hoạt hình cụ thể
+3. Đề cập chất lượng animation, lighting, camera movement
+4. Dài khoảng 200-300 từ
+5. Sẵn sàng copy vào Runway, Pika, Midjourney
+
+CHỈ trả về prompt video, không giải thích gì khác.`
+                            }]
+                        })
+                    });
+
+                    const data = await response.json();
+                    const generatedText = data.content[0].text;
+
+                    generatedPrompts.push({
+                        sceneNum: generatedPrompts.length + 1,
+                        sceneName: scene.sceneName,
+                        prompt: generatedText,
+                        style: styleConfigs[currentStyle]
+                    });
+
+                } catch (error) {
+                    showToast('❌ Lỗi: ' + error.message);
+                }
+            }
+
+            document.getElementById('generateBtn').disabled = false;
+            renderPrompts();
+            showToast('✅ Claude đã tạo xong prompts!');
+        }
+
+        function renderPrompts() {
+            document.getElementById('promptsSection').style.display = 'block';
+            const list = document.getElementById('promptsList');
+            list.innerHTML = generatedPrompts.map((item, idx) => `
+                <div class="prompt-item">
+                    <div class="prompt-header">
+                        <div>
+                            <h3>SCENE ${item.sceneNum}: ${item.sceneName}</h3>
+                            <div class="style-badge">🎨 ${item.style}</div>
+                        </div>
+                        <button class="btn-copy" onclick="copyPrompt(\`${item.prompt.replace(/`/g, '\\`')}\`)">📋 Copy</button>
+                    </div>
+                    <div class="prompt-text">${item.prompt}</div>
+                </div>
+            `).join('');
+
+            document.querySelector('html').scrollIntoView({ behavior: 'smooth', block: 'end' });
+        }
+
+        function copyPrompt(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                showToast('✅ Đã copy vào clipboard!');
+            });
+        }
+
+        function downloadPrompts() {
+            let content = `ANIMATION PROMPTS - ${new Date().toLocaleDateString('vi-VN')}\n`;
+            content += `${'='.repeat(100)}\n\n`;
+            content += `Animation Style: ${styleConfigs[currentStyle]}\n`;
+            content += `Số nhân vật: ${numCharacters}\n`;
+            content += `${'='.repeat(100)}\n\n`;
+
+            generatedPrompts.forEach(item => {
+                content += `SCENE ${item.sceneNum}: ${item.sceneName}\n`;
+                content += `${'─'.repeat(100)}\n`;
+                content += `${item.prompt}\n\n`;
+                content += `${'─'.repeat(100)}\n\n`;
+            });
+
+            const element = document.createElement('a');
+            element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(content));
+            element.setAttribute('download', `animation-prompts-claude-${Date.now()}.txt`);
+            element.click();
+
+            showToast('✅ Đã tải xuống');
+        }
+
+        function showToast(message) {
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+
+        init();
+    </script>
+</body>
+</html>
